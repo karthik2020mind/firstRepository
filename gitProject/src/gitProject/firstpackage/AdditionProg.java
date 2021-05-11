@@ -1,6 +1,6 @@
 package gitProject.firstpackage;
 
-public class Addition {
+public class AdditionProg {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
