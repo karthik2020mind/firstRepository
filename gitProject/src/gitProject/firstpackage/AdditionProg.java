@@ -6,8 +6,8 @@ public class AdditionProg {
 		// TODO Auto-generated method stub
 		int a=9;
 		int b=8;
-		
-		System.out.println(a+b);
+		int d=45;
+		System.out.println(a+b+d);
 	}
 
 }
