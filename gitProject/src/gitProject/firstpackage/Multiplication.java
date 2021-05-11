@@ -1,4 +1,4 @@
-package gitProject.firstpackage.secondproject;
+package gitProject.firstpackage;
 
 public class Multiplication {
 
