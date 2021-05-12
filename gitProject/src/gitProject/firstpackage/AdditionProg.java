@@ -7,7 +7,8 @@ public class AdditionProg {
 		int a=9;
 		int b=8;
 		int d=45;
-		System.out.println(a+b+d);
+		int f=43;
+		System.out.println(a+b+d+f);
 
 		
 		
