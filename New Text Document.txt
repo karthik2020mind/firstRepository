@@ -1,0 +1,958 @@
+ar request;
+function openCrud(evt, process) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(process).style.display = "block";
+    evt.currentTarget.className += " active";
+    if (process == "Delete") {
+        getDeleteId();
+    }
+   else if (process == "Update") {
+        getUpdate();
+       // var styler = document.getElementsByClassName("update");
+        //styler.style.display = "none";
+    }
+    else(process=="Display")
+    {
+        getAllEmployee();
+    }
+
+
+}
+function addDetails() {
+
+    console.log(document.getElementById('name').value);
+    console.log(document.getElementById('age').value);
+    console.log(document.getElementById('role').value);
+
+    event.preventDefault();
+    document.getElementById('message').innerHTML = "checking";
+
+    const url = "http://localhost:1111/Employee//addEmployee";
+    const gpsData = {
+        "id": document.getElementById('id').value,
+        "latitude": document.getElementById('latitude').value,
+        "longtitude": document.getElementById('longitude').value,
+    }
+    const addressdata = {
+        "address": document.getElementById('address').value,
+        "city": document.getElementById('city').value,
+        "state": document.getElementById('state').value,
+        "pin": document.getElementById('pin').value,
+        "gps": gpsData
+    };
+    const data = {
+        "name": document.getElementById('name').value,
+        "age": document.getElementById('age').value,
+        "role": document.getElementById('role').value,
+        "address": addressdata
+    };
+    const other_params = {
+        headers: { "content-type": "application/json; charset=UTF-8" },
+        body: JSON.stringify(data),
+        method: "POST",
+        mode: "cors"
+    };
+
+    fetch(url, other_params)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Could not reach the API: " + response.statusText);
+            }
+        }).then(function (data) {
+            document.getElementById("message").innerHTML = data.encoded;
+        }).catch(function (error) {
+            document.getElementById("message").innerHTML = error.message;
+        });
+        
+    return true;
+}
+function getDeleteId() {
+    $.ajax(
+        {
+            url: 'http://localhost:1111/Employee/displayEmployee',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data, textStatus, xhr) {
+                console.log(data);
+                var temp = " <label>Enter Id:</label><select id='getIdValue'>";
+                for (i = 0; i < data.length; i++) {
+                    temp += "<option value=" + data[i].id + ">" + data[i].id + "</option>";
+                }
+                var value = temp + "</select>";
+                console.log(temp);
+                
+                document.getElementById("getIdDelete").innerHTML = value;
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error in Operation');
+            }
+
+        }
+    )
+
+}
+function DeleteById() {
+    var id = document.getElementById('getIdValue').value;
+    $.ajax(
+        {
+            url: 'http://localhost:1111/Employee/deleteEmployee/' + id,
+            method: 'DELETE',
+            success: function () {
+                alert( "Deleted SucessFully");
+                getDeleteId();
+            },
+            error: function (error) {
+                console.log('Error in Operation');
+            }
+
+        }
+    )
+
+}
+var update;
+function getUpdate() {
+    $.ajax(
+        {
+            url: 'http://localhost:1111/Employee/displayEmployee',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data, textStatus, xhr) {
+                console.log(data);
+                update = data;
+                console.log(update);
+                var temp = " <label>Enter Id:</label><select id='getUpdateIdValue'>";
+                for (i = 0; i < data.length; i++) {
+                    temp += "<option value=" + data[i].id + ">" + data[i].id + "</option>";
+                }
+                console.log(temp);
+                var value = temp + "</select>";
+                document.getElementById("getId").innerHTML = value;
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error in Operation');
+            }
+
+        }
+    )
+
+}
+function getUpdateId() {
+    document.getElementById('displayUpdate').style.display = "block";
+
+    var id = document.getElementById("getUpdateIdValue").value;
+    for (i = 0; i < update.length; i++) {
+        if (update[i].id == id) {
+            document.getElementById('gpsid').value = update[i].address.gps.id;
+            document.getElementById('LatitudeUpdate').value = update[i].address.gps.latitude;
+            document.getElementById('longitudeUpdate').value = update[i].address.gps.longtitude;
+            document.getElementById('addressUpdate').value = update[i].address.address;
+            document.getElementById('cityUpdate').value = update[i].address.city;
+            document.getElementById('stateUpdate').value = update[i].address.state;
+            document.getElementById('pinUpdate').value = update[i].address.pin;
+            document.getElementById('addressid').value = update[i].address.id;
+            document.getElementById('nameUpdate').value = update[i].name;
+            document.getElementById('ageUpdate').value = update[i].age;
+            document.getElementById('roleUpdate').value = update[i].role;
+            document.getElementById('idUpdate').value = update[i].id;
+
+        }
+    }
+
+
+
+}
+function updateValue() {
+
+
+   // event.preventDefault();
+    // document.getElementById('message').innerHTML = "checking";
+console.log("welcome");
+
+    const gpsData = {
+        "id": document.getElementById('gpsid').value,
+        "latitude": document.getElementById('LatitudeUpdate').value,
+        "longtitude": document.getElementById('longitudeUpdate').value,
+    }
+    const addressdata = {
+        "id": document.getElementById('addressid').value,
+        "address": document.getElementById('addressUpdate').value,
+        "city": document.getElementById('cityUpdate').value,
+        "state": document.getElementById('stateUpdate').value,
+        "pin": document.getElementById('pinUpdate').value,
+        "gps": gpsData
+    };
+    const data = {
+        "id": document.getElementById('idUpdate').value,
+        "name": document.getElementById('nameUpdate').value,
+        "age": document.getElementById('ageUpdate').value,
+        "role": document.getElementById('roleUpdate').value,
+        "address": addressdata
+    };
+    $.ajax({
+        type: "PUT",
+        contentType: "application/json",
+        url: "http://localhost:1111/Employee/updateEmployee",
+        data: JSON.stringify(data),
+        dataType: 'json',
+        success: function (result) {
+            console.log(result);
+            alert("Successfully Updated!!");
+            document.getElementById('displayUpdate').style.display = "none";
+            getUpdate();
+            
+        },
+        error: function (e) {
+            console.log(e);
+        }
+    })
+
+}
+function getAllEmployee() {
+    var url = "http://localhost:1111/Employee/displayEmployee";
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", url, true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var employee = JSON.parse(xmlhttp.responseText);
+            var top = ` <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Role</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Pin</th>
+            <th>Latitude</th>
+            <th>Longutitude</th>
+          </tr>`;
+            var main = "";
+            console.log(employee);
+            for (i = 0; i < employee.length; i++) {
+                main += "<tr><td>" + employee[i].id + "</td><td>" + employee[i].name + "</td><td>" + employee[i].age + "</td><td>" + employee[i].role + "</td><td>" + employee[i].address.id + "</td><td>" + "</td><td>" + employee[i].address.address + "</td><td>" + employee[i].address.city + "</td><td>" + employee[i].address.state + "</td><td>" + employee[i].address.pin + "</td><td>" + employee[i].address.gps.latitude + "</td><td" + employee[i].address.gps.longtitude + "</td></tr>";
+            }
+            var table = top + main;
+            document.getElementById("displayTable").innerHTML = table;
+
+        }
+    };
+    xmlhttp.send();
+}
+
+"id":11,
+   "companyName":"abc",
+   "irda":22,
+   "address":"adsad",
+   "contact":23
+
+
+
+
+"insurenceId":90,
+   "insuranceName":"mmm",
+   "type":"vbn",
+   "period":7,
+   "price":866
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+body { 
+font-family: sans-serif;
+  background-image: url("57276.jpg");
+}
+
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #536895;
+}
+
+
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  color: #ffffff;
+ /* cursor: pointer;*/
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+.tab button:hover {
+  background-color: #1c2841;
+}
+
+.tab button.active {
+  background-color: #ccc;
+}
+
+
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+#form{
+margin-top:50px;
+margin-left: 330px;
+}
+#frm{
+margin-top:50px;
+margin-left: 330px;
+}
+input[type=text] {
+  
+  padding: 0px 4px;
+  margin: 8px 0;
+  box-sizing: border-box;
+   border: 1px solid blue;
+  border-radius: 0px;
+ 
+   
+}
+
+#btn{
+   width: 90px;
+  height: 25px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  color: white;
+  background-color: blue;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+}
+#btn:hover{
+ background-color: #2EE59D;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);}
+.for{
+display:none;
+}
+</style>
+<script>
+function openBlock(evt, option) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(option).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+function displayForm(){
+//add html to display form 
+var fhtml = "employee Registration here";
+document.getElementById('abcd').innerHTML= fhtml;
+}
+
+function check(event) {
+    event.preventDefault();
+    document.getElementById('message').innerHTML = "checking";
+
+    const url = "http://localhost:8081/add";
+    const data = {"id": document.getElementById('id').value,
+"name" : document.getElementById('name').value,
+                "age" : document.getElementById('age').value,
+               "location" : document.getElementById('loc').value,
+              "salary" : document.getElementById('sal').value
+                };
+    const other_params = {
+        headers : { "content-type" : "application/json; charset=UTF-8"},
+        body :JSON.stringify(data),
+        method : "POST",
+        mode : "cors"
+    };
+
+    fetch(url, other_params)
+        .then(function(response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Could not reach the API: " + response.statusText);
+        }
+    }).then(function(data) {
+        document.getElementById("message").innerHTML = "Employee Added";
+    }).catch(function(error) {
+        document.getElementById("message").innerHTML = error.message;
+    });
+    return true;
+}
+
+
+
+function loadPersons(){
+	var baseurl = "http://localhost:8081/getallemployee";
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET",baseurl,true);
+  xmlhttp.onreadystatechange = function() {
+    if(xmlhttp.readyState ===4 && xmlhttp.status ===200){
+      var employee= JSON.parse(xmlhttp.responseText);
+      var tbltop = `<div class="table-responsive">          
+                     <table class="table">
+		    <tr><th>Id</th><th>Name</th><th>Age</th><th>Location</th><th>Salary</th><th>Delete</th></tr>`;
+      //main table content we fill from data from the rest call
+      var main ="";
+     for (i = 0; i < employee.length; i++){
+        main += "<tr><td>"+employee[i].id+"</td><td>"+employee[i].name+"</td><td>"+employee[i].age+"</td><td>"+employee[i].location+"</td><td>"+employee[i].salary+"</td><td><button onclick = 'del("+employee[i].id+")'>Delete</button></td></tr>";
+      }
+      var tblbottom = "</table>";
+      var tbl = tbltop + main + tblbottom;
+      document.getElementById("Display").innerHTML = tbl;
+    }
+  };
+  xmlhttp.send();
+}
+window.onload = function(){
+	loadPersons();
+	}
+	
+
+function getEmployee(){
+	
+    var temp=document.getElementById("print");
+
+	var baseurl = "http://localhost:8081/getemployee/";
+  var xmlhttp = new XMLHttpRequest();
+  var val=document.getElementById("eid").value;
+  xmlhttp.open("GET",baseurl + val,true);
+  xmlhttp.onreadystatechange = function() {
+    if(xmlhttp.readyState ===4 && xmlhttp.status ===200){
+      var employee= JSON.parse(xmlhttp.responseText);
+      var tbltop = `<div class="table-responsive">          
+                     <table class="table">
+		    <tr><th>Id</th><th>Name</th><th>Age</th><th>Location</th><th>Salary</th><th>Delete</th></tr>`;
+      //main table content we fill from data from the rest call
+      var main ="";
+    // for (i = 0; i < employee.length; i++){
+        main += "<tr><td>"+employee.id+"</td><td>"+employee.name+"</td><td>"+employee.age+"</td><td>"+employee.location+"</td><td>"+employee.salary+"</td></tr>";
+    //  }
+      var tblbottom = "</table>";
+      var tbl = tbltop + main + tblbottom;
+      temp.innerHTML= tbl;
+    }
+  };
+  xmlhttp.send();
+}
+
+function nameValdation(){
+	
+	var n=document.getElementById("name").value;
+	var name_check = /^[A-Za-z, ]{3,20}$/;
+	if (n== "") { 
+		 
+		
+	      document.getElementById("nerr").innerHTML="*Please Enter Employee Name";
+	     
+	        return false; 
+	    }else if(!name_check.test(n)){
+	    	
+	        document.getElementById("nerr").innerHTML="*Please Check Your Name";
+
+	        return false;
+	    }
+	    else{
+	        document.getElementById("nerr").innerHTML="";
+
+	    }
+	
+	
+	
+}
+
+function IdValdation(){
+	
+	var id=document.getElementById("id").value;
+	var name_check = /^[A-Za-z0-9 ]{3,20}$/;
+	if (id== "") { 
+	      document.getElementById("ierr").innerHTML="*Please Enter Employee Id";
+	        return false; 
+	    }else if(!name_check.test(id)){
+	    	 document.getElementById("ierr").innerHTML="*Please Check Your Id";
+
+	        return false;
+	    }
+	    else{
+      		document.getElementById("ierr").innerHTML="";
+
+	    }
+	
+	
+	
+}
+
+
+function AgeValdation(){
+	
+	var age=document.getElementById("age").value;
+	var name_check = /^[0-9 ]{1,2}$/;
+	if (age== "") { 
+	      document.getElementById("aerr").innerHTML="*Please Enter Employee Age";
+	        return false; 
+	    }else if(!name_check.test(age)){
+	    	 document.getElementById("aerr").innerHTML="*Please Enter Valid Age";
+
+	        return false;
+	    }
+	    else{
+      		 document.getElementById("aerr").innerHTML="";
+
+	    }
+	
+	
+	
+}
+
+
+function validate(){
+	var n=document.getElementById("name").value;
+	var name_check = /^[A-Za-z, ]{3,20}$/;
+	var id=document.getElementById("id").value;
+	var id_check = /^[A-Za-z0-9 ]{3,20}$/;
+	var age=document.getElementById("age").value;
+	var age_check = /^[0-9 ]{1,2}$/;
+	
+	if (id== "") { 
+	      document.getElementById("ierr").innerHTML="*Please Enter Employee Id";
+	        return false; 
+	    }else if(!id_check.test(id)){
+	    	 document.getElementById("ierr").innerHTML="*Please Check Your Id";
+
+	        return false;
+	    }
+	    else{
+      		document.getElementById("ierr").innerHTML="";
+
+	    }
+	if (n== "") { 
+	      document.getElementById("nerr").innerHTML="*Please Enter Employee Name";
+	        return false; 
+	    }else if(!name_check.test(n)){
+	        document.getElementById("nerr").innerHTML="*Please Check Your Name";
+
+	        return false;
+	    }
+	    else{
+	        document.getElementById("nerr").innerHTML="";
+
+	    }
+	
+	if (age== "") { 
+	      document.getElementById("aerr").innerHTML="*Please Enter Employee Age";
+	        return false; 
+	    }else if(!age_check.test(age)){
+	    	 document.getElementById("aerr").innerHTML="*Please Enter Valid Age";
+
+	        return false;
+	    }
+	    else{
+      		 document.getElementById("aerr").innerHTML="";
+
+	    }
+	check(event);
+	loadPersons();
+}
+
+function del(id){
+	$.ajax({
+	url: 'http://localhost:8081/delete/'+id,
+	method: 'DELETE',
+	success: function (){
+	//alert('deleted');
+	loadPersons();
+	},
+	error: function(error){
+	alert(error);
+	}
+	});
+	}
+function updateEmployee(){
+	
+	var id=document.getElementById("empid").value;
+	document.getElementById('frm').style.display = "block";
+	
+	 $.ajax(
+		        {
+		            url: 'http://localhost:8081/getemployee/'+id,
+		            type: 'GET',
+		            dataType: 'json',
+		            success: function (data) {
+		            	console.log("dsdsfdsd");
+		            	document.getElementById("uid").value=data.id;
+		            	document.getElementById("uname").value=data.name;
+		            	document.getElementById("uage").value=data.age;
+		            	document.getElementById("uloc").value=data.location;
+		            	document.getElementById("usal").value=data.salary;
+		                console.log(data);
+		                
+		            
+		            },
+		            error: function (xhr, textStatus, errorThrown) {
+		                console.log('Error in Operation');
+		            }
+
+		        }
+		    )
+		   
+
+}
+
+
+function updateValue(){
+	var id= document.getElementById("uid").value;
+	 const data = {
+		        "id": document.getElementById("uid").value,
+		        "name": document.getElementById("uname").value,
+		        "age": document.getElementById("uage").value,
+		        "location": document.getElementById("uloc").value,
+		        "salary": document.getElementById("usal").value
+		    };
+		    $.ajax({
+		        type: "PUT",
+		        contentType: "application/json",
+		        url: "http://localhost:8081/update/"+id,
+		        data: JSON.stringify(data),
+		        dataType: 'json',
+		        success: function (result) {
+		            console.log(result);
+		            alert("Updated Successfully");
+		            loadPersons(); 
+		            
+		            
+		        },
+		        error: function (e) {
+		            console.log(e);
+		        }
+		    })
+}
+</script>
+</head>
+<body>
+
+  <p>EMPLOYEE MANAGEMENT SYSTEM</p>
+
+<br>
+<div class="tab">
+  <button class="tablinks" onclick="openBlock(event, 'Display')">Display</button>
+    <button class="tablinks" onclick="openBlock(event, 'Displaybyid')">Display By Id</button>
+  <button class="tablinks" onclick="openBlock(event, 'Update')">Update</button>
+  <button class="tablinks" onclick="openBlock(event, 'Register')">Register</button>
+</div>
+
+<div id="Display" class="tabcontent">
+  
+  
+</div>
+
+<div id="Displaybyid" class="tabcontent">
+  <label>Enter Id:</label><input type="text" id="eid" onchange="getEmployee()">
+  <div id="print">
+  
+  </div>
+</div>
+
+<div id="Update" class="tabcontent">
+    <label>Enter Id:</label><input type="text" id="empid" onchange="updateEmployee()">
+  
+  
+<div id="frm" class="for">
+  <form  onsubmit="return updateValue()" >
+      <input type="text" id = "uid" name="id" placeholder="id" ><br>
+    <input type="text" id = "uname" name="name" placeholder="name">
+    <br>  
+    <input type="text" name="age" placeholder="age" id="uage"  ><br> 
+  <input type="text" name="location" placeholder="location" id="uloc"><br>
+  <input type="text" name="salary" placeholder="salary" id="usal"><br>
+    <span id="mes"></span>
+    <button type="submit" id="btn"  name="Submit"><b>Submit</b></button>
+
+</form></div>
+</div>
+
+<div id="Register" class="tabcontent">
+<div id="form">
+  <form method="POST"  onsubmit="return validate()">
+      <input type="text" id = "id" name="id" placeholder="id" onkeyup="return IdValdation()"><span id="ierr" style="color:red"></span><br>
+    <input type="text" id = "name" name="name" placeholder="name" onkeyup="return nameValdation()">
+    <span id="nerr" style="color:red"></span><br>  
+    <input type="text" name="age" placeholder="age" id="age" onkeyup="return AgeValdation()" > <span id="aerr" style="color:red"></span><br> 
+  <input type="text" name="location" placeholder="location" id="loc"><br>
+  <input type="text" name="salary" placeholder="salary" id="sal"><br>
+    <span id='message' style="color:green"></span>
+    <button type="submit" id="btn"  name="Submit"><b>Submit</b>  </button>
+
+</form></div>
+</div>
+<div id="Delete" class="tabcontent">
+  Successfully deleted!!
+</div>
+   
+   
+   
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ * * * * * /path/command
+
+
+1.minutes(0-59)
+2.hour(0-23)
+3.day odfmonth(1-31)
+4.month of year(1-12)
+5.day of week (0-7)
+
+
+
+
+
+
+chmod change mode
+syntx : chmod[option] mode filename
+option: -R  RECURSIVE
+-f FORCE
+-v VERBOSE
+mode
+
+read r
+write w
+execute x
+2ways 
+OCTAL METHOD:
+   user         group       another user
+   r  w  x      r  w  x        r  w  x
+   4  2  1      4  2  1       4  2  1
+
+SYMBOLIC METHOD
+
+syntax: chmod reference operator mode filename
+reference:
+u-user or owner
+g-member of file group
+o-neither u nor g
+a-all
+operator:
++  : add modes
+-  : remove modes
+=  : givim=ng ecxact mode
+
+mode:
+r w x
+
+
+ Date date = new Date();
+	     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+	     String str = formatter.format(date);
+	     LocalTime time=java.time.LocalTime.now();
+	     String str1=time.toString();
+	     od.setOrderedDate(str);
+	     od.setOrderedTime(str1);
+
+
+
+bash
+korn
+c
+z
+fish
+bourne
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {
+        "id": 1,
+        "restaurantName": "abc",
+        "location": "xyz",
+        "distance": 8.0,
+        "budget": 678.0,
+        "restaurantType": "classic",
+        "food": [
+            {
+                "id": 2,
+                "foodName": "xcv",
+                "stock": 7,
+                "price": 878.0,
+                "foodType": "nothing"
+            },
+            {
+                "id": 3,
+                "foodName": "bnb",
+                "stock": 8,
+                "price": 978.0,
+                "foodType": "nothing"
+            }
+        ]
+    }
+]
+
+
+{
+
+"userName":"karthi",
+"userLocation":"xyz",
+"order":[{
+
+    "foodId":51,
+    "quantity":3,
+    
+    
+    
+    "location":"ret"
+}]
+
+}
+ 
+
+
+
+
+{
+
+"userName":"abc",
+"userLocation":"xyz",
+"order":[{
+
+    "userId":78,
+    "quantity":7,
+    "totalPrice":878,
+    "time":"10.20",
+    "date":"2/3/4",
+    "location":"ret"
+},
+{
+
+    "userId":98,
+    "quantity":7,
+    "totalPrice":878,
+    "time":"10.20",
+    "date":"2/3/4",
+    "location":"rfsdet"
+}]
+
+}
+ 
+{
+        "restaurantName": "dominos",
+        "location": "chennai",
+        "distance": 10.2,
+        "budget": 10000.0,
+        "restaurantType": "Ac/NonAc",
+        "food": [
+            {
+               "foodName": "pizza",
+                "stock": 50,
+                "price": 80.0,
+                "foodType": "Nonveg"
+            },
+            {
+                "foodName": "burger",
+                "stock": 30,
+                "price": 50.0,
+                "foodType": "Vegetarian"
+            },
+            {
+                "foodName": "chicken",
+                "stock": 50,
+                "price": 150.0,
+                "foodType": "NonVeg"
+            },
+            {
+                "foodName": "salad",
+                "stock": 50,
+                "price": 30.0,
+                "foodType": "Vegetarian"
+            },
+            {
+                "foodName": "briyani",
+                "stock": 60,
+                "price": 250.0,
+                "foodType": "NonVeg"
+            }
+        ]
+    }
